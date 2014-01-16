@@ -1,2 +1,3 @@
 *.pyc
 rixb/localsettings.py
+.idea
