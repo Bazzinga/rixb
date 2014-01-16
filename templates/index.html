@@ -1,0 +1,101 @@
+{% verbatim %}
+<!DOCTYPE html>
+<html ng-app="Blog">
+<head>
+	<meta charset="utf-8">
+	<title>rixb - a django blog!</title>
+	<script src="static/js/angular.js"></script>
+	<script src="static/js/angular-route.js"></script>
+	<script>
+	var Blog = angular.module("Blog", ["ngRoute"]);
+
+	Blog.factory('PostService', function ($http){
+		return {
+			get: function(short_name) {
+				var url = '/article/' + short_name + '/';
+				$http.get(url).
+				success(function(data, status, headers, config) {
+					console.log(data);
+				}).
+				error(function(data, status, headers, config) {
+					//console.log(data);
+				});
+				return data;
+			}, 
+			list: function() {
+				var url = '/';
+				$http.get(url).
+				success(function(data, status, headers, config) {
+					console.log(data);
+				}).
+				error(function(data, status, headers, config) {
+					//console.log(data);
+				});
+				return data;
+			},
+		}
+	});
+
+
+
+	Blog.controller('PostsController', function ($scope, PostService, posts){
+		console.log(posts);
+	});
+
+	Blog.controller('PostController', function ($scope, PostService, post){
+		console.log(post);
+	});
+
+	function ctrl($http, $scope) {
+		$scope.login = function(user_data) {
+			$http.post("/token-auth/", user_data).
+			success(function(data, status, headers, config) {
+				console.log(data.token);
+			}).
+			error(function(data, status, headers, config){
+				console.log('in error');
+				console.log(status);
+			})
+		}
+	}
+
+
+	Blog.config(function ($routeProvider) {
+		$routeProvider
+			.when("/", {
+				templateUrl: "static/templates/posts.html",
+				controller: "PostsController",
+				resolve: {
+					posts: function(PostService) {
+						return PostService.list();
+					}
+				}
+			})
+			.when("/post/:short_name", {
+				templateUrl: "static/templates/detail.html",
+				controller: "PostController",
+				resolve: {
+					post: function(PostService) {
+						var short_name = $route.current.params.short_name;
+						return PostService.get(short_name);
+					}
+				}
+			})
+	});
+	</script>
+</head>
+
+<body>
+	<h1>Hello world!!</h1>
+	<div ng-controller="ctrl">
+		<form name="loginFm">
+			username:<input ng-model="user.username" />
+			password:<input ng-model="user.password" />
+			<input type="button" value="login" ng-click="login(user)" />
+		</form>
+	</div>
+	<div ng-controller="PostController">
+	</div>
+</body>
+</html>
+{% endverbatim  %}
