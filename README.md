@@ -3,6 +3,12 @@ rixb
 
 A django+django rest framework+angular blog
 
+#needs
+
+    Django
+    Django REST Framework
+    Angular.js
+
 #init
 
     python manage.py syncdb
